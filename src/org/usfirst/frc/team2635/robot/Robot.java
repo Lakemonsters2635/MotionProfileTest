@@ -25,12 +25,20 @@ public class Robot extends IterativeRobot {
 
 	public Robot() { // could also use RobotInit()
 		_talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		_talon.configEncoderCodesPerRev(1000);
+		_talon.configEncoderCodesPerRev(250);
 		_talon.reverseSensor(false); /* keep sensor and motor in phase */
 		_talon2.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		_talon2.configEncoderCodesPerRev(1000);
+		_talon2.configEncoderCodesPerRev(250);
 		_talon2.reverseSensor(false); /* keep sensor and motor in phase */
-		_talon2.reverseOutput(true);
+		_talon2.setInverted(true);
+		_talon.setF(0.03);
+	    _talon.setP(0.1);
+	    _talon.setI(0); 
+	    _talon.setD(0);
+	    _talon2.setF(0.03);
+	    _talon2.setP(0.1);
+	    _talon2.setI(0); 
+	    _talon2.setD(0);
 	}
 	/**  function is called periodically during operator control */
     public void teleopPeriodic() {
@@ -61,6 +69,7 @@ public class Robot extends IterativeRobot {
 			/* button5 is off so straight drive */
 			_talon.changeControlMode(TalonControlMode.Voltage);
 			_talon2.changeControlMode(TalonControlMode.Voltage);
+			_talon2.reverseOutput(true);
 			_talon.set(12.0 * leftYjoystick);
 			_talon2.set(12.0 * leftYjoystick);
 
