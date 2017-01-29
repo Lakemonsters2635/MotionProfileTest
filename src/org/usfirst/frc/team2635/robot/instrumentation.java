@@ -1,5 +1,28 @@
+/**
+ * Since this example focuses on Motion Control, lets print everything related to MP in a clean 
+ * format.  Expect to see something like......
+ * 
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * outputEnable    topBufferRem    topBufferCnt    btmBufferCnt    IsValid     HasUnderrun      IsUnderrun          IsLast         VelOnly         targPos         targVel
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * outputEnable    topBufferRem    topBufferCnt    btmBufferCnt    IsValid     HasUnderrun      IsUnderrun          IsLast         VelOnly         targPos         targVel
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * Hold            2048            0               0               1                                                                               5.0             0.0
+ * 
+ * ...where the columns are reprinted occasionally so you know whats up.
+ * 
+ * 
+ * 
+ */
 package org.usfirst.frc.team2635.robot;
-
 import com.ctre.CANTalon;
 
 public class instrumentation {
@@ -29,7 +52,7 @@ public class instrumentation {
 		long whole = (long)(toround * 1000000.0 + 0.5);
 		return ((double)whole) * 0.000001;
 	}
-	public static void process(CANTalon.MotionProfileStatus status1) {
+	public static void process(CANTalon.MotionProfileStatus status1, String talonName) {
 		double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 
 		if((now-timeout) > 0.2){
@@ -40,6 +63,7 @@ public class instrumentation {
 				count = 8;
 				/* every 8 loops, print our columns */
 				
+				System.out.format("%-9s\t" , "Name");
 				System.out.format("%-9s\t", "topCnt");
 				System.out.format("%-9s\t", "btmCnt");
 				System.out.format("%-9s\t", "set val");
@@ -54,6 +78,7 @@ public class instrumentation {
 				System.out.format("\n");
 			}
 			/* every loop, print our values */
+			System.out.format("%-9s\t", talonName);
 			System.out.format("%-9s\t", status1.topBufferCnt);
 			System.out.format("%-9s\t", status1.btmBufferCnt);
 			System.out.format("%-9s\t", StrOutputEnable(status1.outputEnable));
@@ -69,4 +94,3 @@ public class instrumentation {
 		}
 	}
 }
-
