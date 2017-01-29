@@ -1,4 +1,28 @@
+/**
+ * Example logic for firing and managing motion profiles.
+ * This example sends MPs, waits for them to finish
+ * Although this code uses a CANTalon, nowhere in this module do we changeMode() or call set() to change the output.
+ * This is done in Robot.java to demonstrate how to change control modes on the fly.
+ * 
+ * The only routines we call on Talon are....
+ * 
+ * changeMotionControlFramePeriod
+ * 
+ * getMotionProfileStatus		
+ * clearMotionProfileHasUnderrun     to get status and potentially clear the error flag.
+ * 
+ * pushMotionProfileTrajectory
+ * clearMotionProfileTrajectories
+ * processMotionProfileBuffer,   to push/clear, and process the trajectory points.
+ * 
+ * getControlMode, to check if we are in Motion Profile Control mode.
+ * 
+ * Example of advanced features not demonstrated here...
+ * [1] Calling pushMotionProfileTrajectory() continuously while the Talon executes the motion profile, thereby keeping it going indefinitely.
+ * [2] Instead of setting the sensor position to zero at the start of each MP, the program could offset the MP's position based on current position. 
+ */
 package org.usfirst.frc.team2635.robot;
+
 
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.Notifier;
@@ -6,6 +30,8 @@ import com.ctre.CANTalon.TalonControlMode;
 
 public class MotionProfileExample {
 
+	
+	public String talonName;
 	/**
 	 * The status of the motion profile executer and buffer inside the Talon.
 	 * Instead of creating a new one every time we call getMotionProfileStatus,
@@ -77,8 +103,9 @@ public class MotionProfileExample {
 	 * @param talon
 	 *            reference to Talon object to fetch motion profile status from.
 	 */
-	public MotionProfileExample(CANTalon talon) {
+	public MotionProfileExample(CANTalon talon, String talonName) {
 		_talon = talon;
+		this.talonName = talonName;
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the
 		 * notifer to half that
@@ -117,6 +144,7 @@ public class MotionProfileExample {
 		/* Get the motion profile status every loop */
 		_talon.getMotionProfileStatus(_status);
 
+		System.out.println("Control:" + this.talonName + "\tState:" + _state);
 		/*
 		 * track time, this is rudimentary but that's okay, we just want to make
 		 * sure things never get stuck.
@@ -204,7 +232,7 @@ public class MotionProfileExample {
 			}
 		}
 		/* printfs and/or logging */
-		instrumentation.process(_status);
+		instrumentation.process(_status, talonName);
 	}
 
 	/** Start filling the MPs to all of the involved Talons. */
@@ -274,4 +302,3 @@ public class MotionProfileExample {
 		return _setValue;
 	}
 }
-

@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot extends IterativeRobot {
 
 	/** The Talon we want to motion profile. */
-	CANTalon _talon = new CANTalon(4);
-	CANTalon _talon2 = new CANTalon(6);
+	CANTalon _talon = new CANTalon(9);
+	CANTalon _talon2 = new CANTalon(4);
 
 	/** some example logic on how one can manage an MP */
-	MotionProfileExample _example = new MotionProfileExample(_talon);
-	MotionProfileExample _example2 = new MotionProfileExample(_talon2);
+	MotionProfileExample _example = new MotionProfileExample(_talon, "Left");
+	MotionProfileExample _example2 = new MotionProfileExample(_talon2, "Right");
 	
 	/** joystick for testing */
 	Joystick _joy= new Joystick(0);
@@ -24,19 +24,21 @@ public class Robot extends IterativeRobot {
 
 
 	public Robot() { // could also use RobotInit()
+		
+		
 		_talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		_talon.configEncoderCodesPerRev(250);
-		_talon.reverseSensor(false); /* keep sensor and motor in phase */
 		_talon2.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		_talon2.configEncoderCodesPerRev(250);
-		_talon2.reverseSensor(false); /* keep sensor and motor in phase */
-		_talon2.setInverted(true);
-		_talon.setF(0.03);
-	    _talon.setP(0.1);
+		//_talon2.setInverted(true);
+		
+		_talon.setF(5.0);
+	    _talon.setP(0.05);
 	    _talon.setI(0); 
 	    _talon.setD(0);
-	    _talon2.setF(0.03);
-	    _talon2.setP(0.1);
+	    
+	    _talon2.setF(5.0);
+	    _talon2.setP(0.05);
 	    _talon2.setI(0); 
 	    _talon2.setD(0);
 	}
@@ -69,7 +71,8 @@ public class Robot extends IterativeRobot {
 			/* button5 is off so straight drive */
 			_talon.changeControlMode(TalonControlMode.Voltage);
 			_talon2.changeControlMode(TalonControlMode.Voltage);
-			_talon2.reverseOutput(true);
+			
+	
 			_talon.set(12.0 * leftYjoystick);
 			_talon2.set(12.0 * leftYjoystick);
 
@@ -80,13 +83,15 @@ public class Robot extends IterativeRobot {
 			 * When we transition from no-press to press,
 			 * pass a "true" once to MotionProfileControl.
 			 */
+			
 			_talon.changeControlMode(TalonControlMode.MotionProfile);
 			_talon2.changeControlMode(TalonControlMode.MotionProfile);
-			
+
 			CANTalon.SetValueMotionProfile setOutput = _example.getSetValue();
 			CANTalon.SetValueMotionProfile setOutput2 = _example2.getSetValue();
-			
+			//_talon2.setInverted(true);
 					
+		
 			_talon.set(setOutput.value);
 			_talon2.set(setOutput2.value);
 
@@ -95,11 +100,15 @@ public class Robot extends IterativeRobot {
 			 * This will signal the robot to start a MP */
 			if( (btns[6] == true) && (_btnsLast[6] == false) ) {
 				/* user just tapped button 6 */
+				//_talon2.setInverted(true);				
+
 				_example.startMotionProfile();
 				_example2.startMotionProfile();
+				
+
 			}
 			//_talon.changeControlMode(TalonControlMode.Voltage);
-			//_talon.set(10);
+			//_talon2.set(10.0);
 		}
 
 		/* save buttons states for on-press detection */
