@@ -277,7 +277,7 @@ public class MotionProfileExample {
 			
 			point.timeDurMs = (int) profile[i][2];
 			point.profileSlotSelect = 0; /* which set of gains would you like to use? */
-			point.velocityOnly = true; /* set true to not do any position
+			point.velocityOnly = false; /* set true to not do any position
 										 * servo, just velocity feedforward
 										 */
 			point.zeroPos = false;
