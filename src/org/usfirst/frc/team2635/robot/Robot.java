@@ -12,8 +12,8 @@ public class Robot extends IterativeRobot {
 	CANTalon _talon2 = new CANTalon(4);
 
 	/** some example logic on how one can manage an MP */
-	MotionProfileExample _example = new MotionProfileExample(_talon, "Left");
-	MotionProfileExample _example2 = new MotionProfileExample(_talon2, "Right");
+	MotionProfileExample _example = new MotionProfileExample(_talon, "Left", true);
+	MotionProfileExample _example2 = new MotionProfileExample(_talon2, "Right", false);
 	
 	/** joystick for testing */
 	Joystick _joy= new Joystick(0);

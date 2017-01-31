@@ -32,6 +32,7 @@ public class MotionProfileExample {
 
 	
 	public String talonName;
+	public boolean reverseMotionProfile;
 	/**
 	 * The status of the motion profile executer and buffer inside the Talon.
 	 * Instead of creating a new one every time we call getMotionProfileStatus,
@@ -103,9 +104,10 @@ public class MotionProfileExample {
 	 * @param talon
 	 *            reference to Talon object to fetch motion profile status from.
 	 */
-	public MotionProfileExample(CANTalon talon, String talonName) {
+	public MotionProfileExample(CANTalon talon, String talonName, boolean reverse) {
 		_talon = talon;
 		this.talonName = talonName;
+		this.reverseMotionProfile = reverse;
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the
 		 * notifer to half that
@@ -238,10 +240,10 @@ public class MotionProfileExample {
 	/** Start filling the MPs to all of the involved Talons. */
 	private void startFilling() {
 		/* since this example only has one talon, just update that one */
-		startFilling(GeneratedMotionProfile.Points, GeneratedMotionProfile.kNumPoints);
+		startFilling(GeneratedMotionProfile.Points, GeneratedMotionProfile.kNumPoints, this.reverseMotionProfile);
 	}
 
-	private void startFilling(double[][] profile, int totalCnt) {
+	private void startFilling(double[][] profile, int totalCnt, boolean reverse) {
 
 		/* create an empty point */
 		CANTalon.TrajectoryPoint point = new CANTalon.TrajectoryPoint();
@@ -266,10 +268,16 @@ public class MotionProfileExample {
 		for (int i = 0; i < totalCnt; ++i) {
 			/* for each point, fill our structure and pass it to API */
 			point.position = profile[i][0];
-			point.velocity = profile[i][1];
+			if (reverse == true){
+				point.velocity = profile[i][1]*-1;
+			}
+			else{
+				point.velocity = profile[i][1];
+			}
+			
 			point.timeDurMs = (int) profile[i][2];
 			point.profileSlotSelect = 0; /* which set of gains would you like to use? */
-			point.velocityOnly = false; /* set true to not do any position
+			point.velocityOnly = true; /* set true to not do any position
 										 * servo, just velocity feedforward
 										 */
 			point.zeroPos = false;
