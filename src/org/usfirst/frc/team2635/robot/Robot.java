@@ -32,13 +32,13 @@ public class Robot extends IterativeRobot {
 		_talon2.configEncoderCodesPerRev(250);
 		//_talon2.setInverted(true);
 		
-		_talon.setF(5.0);
-	    _talon.setP(0.05);
+		_talon.setF(1.5345);
+	    _talon.setP(5);
 	    _talon.setI(0); 
 	    _talon.setD(0);
 	    
-	    _talon2.setF(5.0);
-	    _talon2.setP(0.05);
+	    _talon2.setF(1.5345);
+	    _talon2.setP(5);
 	    _talon2.setI(0); 
 	    _talon2.setD(0);
 	}
