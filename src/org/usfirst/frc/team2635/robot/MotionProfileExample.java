@@ -24,6 +24,10 @@
 package org.usfirst.frc.team2635.robot;
 
 
+import java.util.Map.Entry;
+
+import javax.swing.text.html.HTMLDocument.Iterator;
+
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.Notifier;
 import com.ctre.CANTalon.TalonControlMode;
@@ -33,6 +37,10 @@ public class MotionProfileExample {
 	
 	public String talonName;
 	public boolean reverseMotionProfile;
+	public MotionProfileLibrary profileCollection;
+	public MotionProfile currentProfile = null;
+	public boolean currentMotionProfileCompleted;
+	
 	/**
 	 * The status of the motion profile executer and buffer inside the Talon.
 	 * Instead of creating a new one every time we call getMotionProfileStatus,
@@ -104,10 +112,11 @@ public class MotionProfileExample {
 	 * @param talon
 	 *            reference to Talon object to fetch motion profile status from.
 	 */
-	public MotionProfileExample(CANTalon talon, String talonName, boolean reverse) {
+	public MotionProfileExample(CANTalon talon, String talonName, boolean reverse, MotionProfileLibrary profileCollection) {
 		_talon = talon;
 		this.talonName = talonName;
 		this.reverseMotionProfile = reverse;
+		this.profileCollection = profileCollection;
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the
 		 * notifer to half that
@@ -146,6 +155,24 @@ public class MotionProfileExample {
 		/* Get the motion profile status every loop */
 		_talon.getMotionProfileStatus(_status);
 
+		 //currentProfile = null;
+		 java.util.Iterator<Entry<String, MotionProfile>> it = profileCollection.Profiles.entrySet().iterator();
+		 //string currentProfileName = "";
+		  while (it.hasNext()) {
+			  //this.profileCollection.Profiles. = (this.profileCollection.Profiles.)it.next();
+			  MotionProfile profile = it.next().getValue();
+			  if (!profile.profileCompleted)
+			  {
+				  currentProfile = profile;
+				  
+			  }
+		    }
+		
+		  if (currentProfile != null)
+		  {
+			  System.out.println("currentProfile:" + this.talonName + "\tProfileName:" + currentProfile.profileName);
+		  }
+		
 		System.out.println("Control:" + this.talonName + "\tState:" + _state);
 		/*
 		 * track time, this is rudimentary but that's okay, we just want to make
@@ -185,13 +212,18 @@ public class MotionProfileExample {
 					if (_bStart) {
 						_bStart = false;
 	
+						
 						_setValue = CANTalon.SetValueMotionProfile.Disable;
-						startFilling();
-						/*
-						 * MP is being sent to CAN bus, wait a small amount of time
-						 */
-						_state = 1;
-						_loopTimeout = kNumLoopsTimeout;
+						 
+						if (currentProfile != null && currentProfile.profileCompleted == false)
+						{
+							startFilling();
+							/*
+							 * MP is being sent to CAN bus, wait a small amount of time
+							 */
+							_state = 1;
+							_loopTimeout = kNumLoopsTimeout;
+						}
 					}
 					break;
 				case 1: /*
@@ -229,6 +261,11 @@ public class MotionProfileExample {
 						_setValue = CANTalon.SetValueMotionProfile.Hold;
 						_state = 0;
 						_loopTimeout = -1;
+						currentProfile.profileCompleted = true;
+						if (currentProfile.isLastProfile == false)
+						{
+							reset();
+						}
 					}
 					break;
 			}
@@ -238,12 +275,25 @@ public class MotionProfileExample {
 	}
 
 	/** Start filling the MPs to all of the involved Talons. */
-	private void startFilling() {
-		/* since this example only has one talon, just update that one */
-		startFilling(GeneratedMotionProfile.Points, GeneratedMotionProfile.kNumPoints, this.reverseMotionProfile);
+	private void startFilling() 
+	{
+		if (currentProfile != null )
+		{
+			/* since this example only has one talon, just update that one */
+			if (this.talonName == "Left")
+			{
+				startFilling(currentProfile.leftPoints, this.reverseMotionProfile);
+			}
+			else
+			{
+				startFilling(currentProfile.rightPoints, this.reverseMotionProfile);
+			}
+		}
+		
+		
 	}
 
-	private void startFilling(double[][] profile, int totalCnt, boolean reverse) {
+	private void startFilling(double[][] profile, boolean reverse) {
 
 		/* create an empty point */
 		CANTalon.TrajectoryPoint point = new CANTalon.TrajectoryPoint();
@@ -264,14 +314,17 @@ public class MotionProfileExample {
 		 */
 		_talon.clearMotionProfileTrajectories();
 
+		System.out.println("profile.length:" + profile.length);
 		/* This is fast since it's just into our TOP buffer */
-		for (int i = 0; i < totalCnt; ++i) {
+		for (int i = 0; i < profile.length; ++i) {
 			/* for each point, fill our structure and pass it to API */
-			point.position = profile[i][0];
+			
 			if (reverse == true){
+				point.position = profile[i][0] * -1;
 				point.velocity = profile[i][1]*-1;
 			}
 			else{
+				point.position = profile[i][0];
 				point.velocity = profile[i][1];
 			}
 			
@@ -285,7 +338,7 @@ public class MotionProfileExample {
 				point.zeroPos = true; /* set this to true on the first point */
 
 			point.isLastPoint = false;
-			if ((i + 1) == totalCnt)
+			if ((i + 1) == profile.length)
 				point.isLastPoint = true; /* set this to true on the last point  */
 
 			_talon.pushMotionProfileTrajectory(point);

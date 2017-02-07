@@ -10,14 +10,21 @@ public class Robot extends IterativeRobot {
 	/** The Talon we want to motion profile. */
 	CANTalon _talon = new CANTalon(9);
 	CANTalon _talon2 = new CANTalon(4);
+	CANTalon _talon3 = new CANTalon(6);
+	CANTalon _talon4 = new CANTalon(12);
 
 	/** some example logic on how one can manage an MP */
-	MotionProfileExample _example = new MotionProfileExample(_talon, "Left", true);
-	MotionProfileExample _example2 = new MotionProfileExample(_talon2, "Right", false);
+	MotionProfileLibrary MotionProfiles = new MotionProfileLibrary();
+    
+    
+	MotionProfileExample _example = new MotionProfileExample(_talon, "Left", true, MotionProfiles);
+	MotionProfileExample _example2 = new MotionProfileExample(_talon2, "Right", false, MotionProfiles);
 	
 	/** joystick for testing */
 	Joystick _joy= new Joystick(0);
-
+	
+	
+	
 	/** cache last buttons so we can detect press events.  In a command-based project you can leverage the on-press event
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
 	boolean [] _btnsLast = {false,false,false,false,false,false,false,false,false,false};
@@ -32,6 +39,10 @@ public class Robot extends IterativeRobot {
 		_talon2.configEncoderCodesPerRev(250);
 		//_talon2.setInverted(true);
 		
+		_talon3.changeControlMode(CANTalon.TalonControlMode.Follower);
+		_talon4.changeControlMode(CANTalon.TalonControlMode.Follower);
+		
+		
 		_talon.setF(1.5345);
 	    _talon.setP(5);
 	    _talon.setI(0); 
@@ -41,6 +52,11 @@ public class Robot extends IterativeRobot {
 	    _talon2.setP(5);
 	    _talon2.setI(0); 
 	    _talon2.setD(0);
+	    
+		_talon3.set(_talon.getDeviceID());
+		_talon4.set(_talon2.getDeviceID());
+
+
 	}
 	/**  function is called periodically during operator control */
     public void teleopPeriodic() {
@@ -75,6 +91,8 @@ public class Robot extends IterativeRobot {
 	
 			_talon.set(12.0 * leftYjoystick);
 			_talon2.set(12.0 * leftYjoystick);
+			
+			
 
 			_example.reset();
 			_example2.reset();
