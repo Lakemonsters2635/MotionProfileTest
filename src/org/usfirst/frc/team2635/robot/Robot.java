@@ -1,6 +1,6 @@
 
 package org.usfirst.frc.team2635.robot;
-
+import java.util.ArrayList;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -32,6 +32,12 @@ public class Robot extends IterativeRobot {
 
 	public Robot() { // could also use RobotInit()
 		
+		
+		ArrayList<ProfilePoint> Points = MotionProfiles.Drive480(120,  2.5);
+		for (int i=0; i < Points.size(); i++)
+		{
+			System.out.println("{" + Points.get(i).RotationalPosition + "," + Points.get(i).Velocity+ "," + Points.get(i).Duration + "},");
+		}
 		
 		_talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		_talon.configEncoderCodesPerRev(250);

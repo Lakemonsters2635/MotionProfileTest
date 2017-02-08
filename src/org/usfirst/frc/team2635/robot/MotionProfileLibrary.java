@@ -2,6 +2,7 @@ package org.usfirst.frc.team2635.robot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class MotionProfileLibrary
 {
@@ -20,9 +21,11 @@ public class MotionProfileLibrary
 		return outProfile;
 	}
 	
-	public 	double[][] RampUp480()
+	public 	ArrayList<ProfilePoint> RampUp480()
 	{
 			
+
+		
 		// Position (rotations)	Velocity (RPM)	Duration (ms)
 		double [][]Points = new double[][]{		
 		{0.0167272727272727,	61.09090909	,10},
@@ -42,24 +45,31 @@ public class MotionProfileLibrary
 		{0.713090909090909,	475.6363636	,10},
 		{0.792727272727273,	480	,10}};
 		
-		return Points;
+		ArrayList<ProfilePoint> resultPoints = new ArrayList<ProfilePoint>();
+		for (int i=0; i < Points.length; i++)
+		{
+			ProfilePoint point = new ProfilePoint( Points[i][0], Points[i][1], (int)Points[i][2]);
+			resultPoints.add(point);
+		}
+		
+		return resultPoints;
 		
 	}
 	
 	
 	
-	public double[][] RampDown480(double RampdownStart)
+	public ArrayList<ProfilePoint> RampDown480(double RampdownStart)
 	{
 		// Position (rotations)	Velocity (RPM)	Duration (ms)
 		double [][]Points = new double[][]{	
-		{RampdownStart +	0.07927272727	,10},
+		{RampdownStart +	0.07927272727,	470         ,10},  //FHE  470 Fudged
 		{RampdownStart +	0.1567272727,	458.1818182	,10},
 		{RampdownStart +	0.2316363636,	440.7272727	,10},
 		{RampdownStart +	0.3032727273,	418.9090909	,10},
 		{RampdownStart +	0.3709090909,	392.7272727	,10},
 		{RampdownStart +	0.4338181818,	362.1818182	,10},
-		{RampdownStart +	0.4912727273	,10},
-		{RampdownStart +	0.5425454545,	288	,10},
+		{RampdownStart +	0.4912727273,	349.0909092 ,10},  //FHE 349.0909092 Fudged
+		{RampdownStart +	0.5425454545,	288	        ,10},
 		{RampdownStart +	0.5869090909,	244.3636364	,10},
 		{RampdownStart +	0.6236363636,	196.3636364	,10},
 		{RampdownStart +	0.6530909091,	157.0909091	,10},
@@ -70,17 +80,38 @@ public class MotionProfileLibrary
 		{RampdownStart +	0.7221818182,	26.18181818	,10},
 		{RampdownStart +	0.7254545455,	13.09090909	,10},
 		{RampdownStart +	0.7269090909,	4.363636364	,10},
-		{RampdownStart +	0.7272727273,	0	,10},
-		{RampdownStart +	0.7272727273,	0	,10}};
+		{RampdownStart +	0.7272727273,	0	        ,10},
+		{RampdownStart +	0.7272727273,	0	        ,10}};
 		
+		ArrayList<ProfilePoint> resultPoints = new ArrayList<ProfilePoint>();
+		for (int i=0; i < Points.length; i++)
+		{
+			double position = 0;
+			double velocity = 0;
+			double duration = 0;
+			if (Points[i].length < 3)
+			{
+				System.out.println("!!!!!!Points[i].length!!!!!:" + Points[i].length);
+				
+			}
+			else
+			{
+				ProfilePoint point = new ProfilePoint( Points[i][0], Points[i][1], (int)Points[i][2]);
+				resultPoints.add(point);	
+			}
+			
 		
-		return Points;
+
+		}
+		
+		return resultPoints;
 	}
 	
-	public double[][] Drive480(double distanceInches,  double wheelRadiusInches)
+	public ArrayList<ProfilePoint> Drive480(double distanceInches,  double wheelRadiusInches)
 	{
-		double [][] RampUpPoints = RampUp480();
-		double RampUpEndPosition = RampUpPoints[RampUpPoints.length][0];
+		ArrayList<ProfilePoint> TotalPointsList = RampUp480();
+		
+		double RampUpEndPosition = TotalPointsList.get(TotalPointsList.size()-1).RotationalPosition;
 		
 		
 		//distance = 120 in
@@ -92,61 +123,32 @@ public class MotionProfileLibrary
 		
 		double Time = (requiredRotations / 480) * 60;
 		double numberOfIntervals = Time * 100;
-		double [][]Points = new double[(int)numberOfIntervals][3];
+		
+		System.out.println("distancePerRotation:" + distancePerRotation);
+		System.out.println("requiredRotations:" + requiredRotations);
+		System.out.println("Time:" + Time);
+		System.out.println("numberOfIntervals:" + numberOfIntervals);
+		
+		//double [][]Points = new double[(int)numberOfIntervals][3];
+		
+		
 		
 		double positionDelta = (480 * .01)/60;
-		Points[0][0] = RampUpEndPosition + positionDelta;
-		Points[0][1] = 480;
-		Points[0][2] = 10;
+		ProfilePoint point = new ProfilePoint(RampUpEndPosition + positionDelta, 480,10);
+		TotalPointsList.add(point);
 		
-		for (int i=1; i < Points.length; i++)
+		for (int i=1; i < (int)numberOfIntervals; i++)
 		{
-			Points[i][0] = Points[i-1][0] + positionDelta;
-			Points[i][1] = 480;
-			Points[i][2] = 10;
+			point = new ProfilePoint(TotalPointsList.get(i-1).RotationalPosition + positionDelta, 480,10);
+			TotalPointsList.add(point);
 		}
 		
-		
-		double [][] rampDownPoints = RampDown480(Points[Points.length][0]);
-		
-		double [][] fullPointsList = new double[RampUpPoints.length + Points.length + rampDownPoints.length][3];
-		for (int i=0; i < RampUpPoints.length; i++)
-		{
-			fullPointsList[i][0] = RampUpPoints[i][0];
-			fullPointsList[i][1] = RampUpPoints[i][1];
-			fullPointsList[i][2] = RampUpPoints[i][2];
-		}
-		
-		for (int i=RampUpPoints.length; i < RampUpPoints.length + Points.length; i++)
-		{
-			fullPointsList[i][0] = Points[i-RampUpPoints.length][0];
-			fullPointsList[i][1] = Points[i-RampUpPoints.length][1];
-			fullPointsList[i][2] = Points[i-RampUpPoints.length][2];
-		}	
-		
-		int indexDecrement = RampUpPoints.length + Points.length;
-		for (int i=RampUpPoints.length + Points.length; i < RampUpPoints.length + Points.length + rampDownPoints.length; i++)
-		{
-			fullPointsList[i][0] = rampDownPoints[i-indexDecrement][0];
-			fullPointsList[i][1] = rampDownPoints[i-indexDecrement][1];
-			fullPointsList[i][2] = rampDownPoints[i-indexDecrement][2];
-		}	
-		
-		//480 RPM/
-		//number of points = 
-		
-		
-		//point.position = profile[i][0];
-		//point.velocity = profile[i][1];
-		
+		ArrayList<ProfilePoint> rampDownPoints = RampDown480(TotalPointsList.get(TotalPointsList.size()-1).RotationalPosition);
 
+		TotalPointsList.addAll(rampDownPoints);
 		
 		
-		//1.91272727272727,	8,	10,
-		
-		
-		
-		return fullPointsList;
+		return TotalPointsList;
 	}
 	
 	
