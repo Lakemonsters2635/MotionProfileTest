@@ -30,7 +30,7 @@ public class Robot extends IterativeRobot {
 	/** joystick for testing */
 	Joystick _joy= new Joystick(0);
 	
-	
+	boolean useMotionMagic = true;
 	
 	/** cache last buttons so we can detect press events.  In a command-based project you can leverage the on-press event
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
@@ -50,7 +50,7 @@ public class Robot extends IterativeRobot {
 		_talon.configEncoderCodesPerRev(250);
 		_talon2.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		_talon2.configEncoderCodesPerRev(250);
-		//_talon2.setInverted(true);
+		_talon2.setInverted(true);
 		
 		_talon3.changeControlMode(CANTalon.TalonControlMode.Follower);
 		_talon4.changeControlMode(CANTalon.TalonControlMode.Follower);
@@ -60,11 +60,15 @@ public class Robot extends IterativeRobot {
 	    _talon.setP(5);
 	    _talon.setI(0); 
 	    _talon.setD(0);
+	    _talon.setMotionMagicCruiseVelocity(1000.0);
+	    _talon.setMotionMagicAcceleration(2000.0);
 	    
 	    _talon2.setF(1.5345);
 	    _talon2.setP(5);
 	    _talon2.setI(0); 
 	    _talon2.setD(0);
+	    _talon2.setMotionMagicCruiseVelocity(1000.0);
+	    _talon2.setMotionMagicAcceleration(2000.0);
 	    
 		_talon3.set(_talon.getDeviceID());
 		_talon4.set(_talon2.getDeviceID());
@@ -115,16 +119,22 @@ public class Robot extends IterativeRobot {
 			 * pass a "true" once to MotionProfileControl.
 			 */
 			
-			_talon.changeControlMode(TalonControlMode.MotionProfile);
-			_talon2.changeControlMode(TalonControlMode.MotionProfile);
+			if (useMotionMagic){
+				_talon.changeControlMode(TalonControlMode.MotionMagic);
+				_talon2.changeControlMode(TalonControlMode.MotionMagic);
+			} else {
+				_talon.changeControlMode(TalonControlMode.MotionProfile);
+				_talon2.changeControlMode(TalonControlMode.MotionProfile);
 
-			CANTalon.SetValueMotionProfile setOutput = _example.getSetValue();
-			CANTalon.SetValueMotionProfile setOutput2 = _example2.getSetValue();
-			//_talon2.setInverted(true);
-					
-		
-			_talon.set(setOutput.value);
-			_talon2.set(setOutput2.value);
+				CANTalon.SetValueMotionProfile setOutput = _example.getSetValue();
+				CANTalon.SetValueMotionProfile setOutput2 = _example2.getSetValue();
+				//_talon2.setInverted(true);
+						
+			
+				_talon.set(setOutput.value);
+				_talon2.set(setOutput2.value);
+			}
+			
 
 			/* if btn is pressed and was not pressed last time,
 			 * In other words we just detected the on-press event.
@@ -133,9 +143,14 @@ public class Robot extends IterativeRobot {
 				/* user just tapped button 6 */
 				//_talon2.setInverted(true);				
 
-				_example.startMotionProfile();
-				_example2.startMotionProfile();
-				
+				if (useMotionMagic){
+					_talon.set(5.0);
+					_talon2.set(5.0);
+				} else {
+					_example.startMotionProfile();
+					_example2.startMotionProfile();
+				}
+							
 
 			}
 			//_talon.changeControlMode(TalonControlMode.Voltage);
