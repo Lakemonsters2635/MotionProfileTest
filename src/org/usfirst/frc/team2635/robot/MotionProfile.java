@@ -3,17 +3,16 @@ package org.usfirst.frc.team2635.robot;
 public class MotionProfile
 {		
 	// Position (rotations)	Velocity (RPM)	Duration (ms)
-	public  double [][]leftPoints;
-	public  double [][]rightPoints;
+	public  double [][]profilePoints;
+
 	
-	public boolean leftReverse;
-	public boolean rightReverse;
-	public boolean profileCompleted;
+	public boolean Reverse;
 	public String profileName;
-	public boolean  isLastProfile;
+
 	
-	public MotionProfile()
+	public MotionProfile(double[][] points, boolean reverse )
 	{
-		
+		this.Reverse = reverse;
+		this.profilePoints = points;
 	}
 }

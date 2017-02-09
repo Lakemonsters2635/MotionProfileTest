@@ -1,4 +1,3 @@
-
 package org.usfirst.frc.team2635.robot;
 import java.util.ArrayList;
 import com.ctre.CANTalon;
@@ -13,12 +12,20 @@ public class Robot extends IterativeRobot {
 	CANTalon _talon3 = new CANTalon(6);
 	CANTalon _talon4 = new CANTalon(12);
 
+	MotionProfileLibrary profileLibrary = new MotionProfileLibrary();
+	ArrayList<ProfilePoint> pointList = profileLibrary.Drive480(120, 2.5);
+	//double[][] profilePoints = profileLibrary.ArrayListToPoints(pointList);
+	double[][] profilePoints = profileLibrary.Profiles.get("Profile").profilePoints;
+	MotionProfile leftProfile = new MotionProfile(profilePoints, true);
+	MotionProfile rightProfile = new MotionProfile(profilePoints, false);
+
+	
 	/** some example logic on how one can manage an MP */
-	MotionProfileLibrary MotionProfiles = new MotionProfileLibrary();
+	//MotionProfileLibrary MotionProfiles = new MotionProfileLibrary();
     
     
-	MotionProfileExample _example = new MotionProfileExample(_talon, "Left", true, MotionProfiles);
-	MotionProfileExample _example2 = new MotionProfileExample(_talon2, "Right", false, MotionProfiles);
+	MotionProfileExample _example = new MotionProfileExample(_talon, leftProfile);
+	MotionProfileExample _example2 = new MotionProfileExample(_talon2, rightProfile);
 	
 	/** joystick for testing */
 	Joystick _joy= new Joystick(0);
@@ -33,7 +40,7 @@ public class Robot extends IterativeRobot {
 	public Robot() { // could also use RobotInit()
 		
 		
-		ArrayList<ProfilePoint> Points = MotionProfiles.Drive480(120,  2.5);
+		ArrayList<ProfilePoint> Points = profileLibrary.Drive480(24,  2.5);
 		for (int i=0; i < Points.size(); i++)
 		{
 			System.out.println("{" + Points.get(i).RotationalPosition + "," + Points.get(i).Velocity+ "," + Points.get(i).Duration + "},");

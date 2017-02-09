@@ -36,10 +36,9 @@ public class MotionProfileExample {
 
 	
 	public String talonName;
-	public boolean reverseMotionProfile;
-	public MotionProfileLibrary profileCollection;
+	//public MotionProfileLibrary profileCollection;
 	public MotionProfile currentProfile = null;
-	public boolean currentMotionProfileCompleted;
+	//public boolean currentMotionProfileCompleted;
 	
 	/**
 	 * The status of the motion profile executer and buffer inside the Talon.
@@ -112,11 +111,11 @@ public class MotionProfileExample {
 	 * @param talon
 	 *            reference to Talon object to fetch motion profile status from.
 	 */
-	public MotionProfileExample(CANTalon talon, String talonName, boolean reverse, MotionProfileLibrary profileCollection) {
+	public MotionProfileExample(CANTalon talon,  MotionProfile profile) {
 		_talon = talon;
-		this.talonName = talonName;
-		this.reverseMotionProfile = reverse;
-		this.profileCollection = profileCollection;
+
+		this.currentProfile = profile;
+		//this.profileCollection = profileCollection;
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the
 		 * notifer to half that
@@ -156,24 +155,11 @@ public class MotionProfileExample {
 		_talon.getMotionProfileStatus(_status);
 
 		 //currentProfile = null;
-		 java.util.Iterator<Entry<String, MotionProfile>> it = profileCollection.Profiles.entrySet().iterator();
-		 //string currentProfileName = "";
-		  while (it.hasNext()) {
-			  //this.profileCollection.Profiles. = (this.profileCollection.Profiles.)it.next();
-			  MotionProfile profile = it.next().getValue();
-			  if (!profile.profileCompleted)
-			  {
-				  currentProfile = profile;
-				  
-			  }
-		    }
+
 		
-		  if (currentProfile != null)
-		  {
-			  System.out.println("currentProfile:" + this.talonName + "\tProfileName:" + currentProfile.profileName);
-		  }
+
 		
-		System.out.println("Control:" + this.talonName + "\tState:" + _state);
+		//System.out.println("Control:" + this.talonName + "\tState:" + _state);
 		/*
 		 * track time, this is rudimentary but that's okay, we just want to make
 		 * sure things never get stuck.
@@ -215,15 +201,14 @@ public class MotionProfileExample {
 						
 						_setValue = CANTalon.SetValueMotionProfile.Disable;
 						 
-						if (currentProfile != null && currentProfile.profileCompleted == false)
-						{
-							startFilling();
-							/*
-							 * MP is being sent to CAN bus, wait a small amount of time
-							 */
-							_state = 1;
-							_loopTimeout = kNumLoopsTimeout;
-						}
+
+						startFilling();
+						/*
+						 * MP is being sent to CAN bus, wait a small amount of time
+						 */
+						_state = 1;
+						_loopTimeout = kNumLoopsTimeout;
+	
 					}
 					break;
 				case 1: /*
@@ -261,11 +246,7 @@ public class MotionProfileExample {
 						_setValue = CANTalon.SetValueMotionProfile.Hold;
 						_state = 0;
 						_loopTimeout = -1;
-						currentProfile.profileCompleted = true;
-						if (currentProfile.isLastProfile == false)
-						{
-							reset();
-						}
+
 					}
 					break;
 			}
@@ -280,14 +261,8 @@ public class MotionProfileExample {
 		if (currentProfile != null )
 		{
 			/* since this example only has one talon, just update that one */
-			if (this.talonName == "Left")
-			{
-				startFilling(currentProfile.leftPoints, this.reverseMotionProfile);
-			}
-			else
-			{
-				startFilling(currentProfile.rightPoints, this.reverseMotionProfile);
-			}
+			startFilling(currentProfile.profilePoints, currentProfile.Reverse);
+
 		}
 		
 		
@@ -314,7 +289,7 @@ public class MotionProfileExample {
 		 */
 		_talon.clearMotionProfileTrajectories();
 
-		System.out.println("profile.length:" + profile.length);
+		//System.out.println("profile.length:" + profile.length);
 		/* This is fast since it's just into our TOP buffer */
 		for (int i = 0; i < profile.length; ++i) {
 			/* for each point, fill our structure and pass it to API */
