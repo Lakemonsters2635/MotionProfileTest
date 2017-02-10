@@ -60,21 +60,78 @@ public class Robot extends IterativeRobot {
 	    _talon.setP(5);
 	    _talon.setI(0); 
 	    _talon.setD(0);
-	    _talon.setMotionMagicCruiseVelocity(1000.0);
-	    _talon.setMotionMagicAcceleration(2000.0);
+	    _talon.setMotionMagicCruiseVelocity(200.0);
+	    _talon.setMotionMagicAcceleration(400.0);
 	    
 	    _talon2.setF(1.5345);
 	    _talon2.setP(5);
 	    _talon2.setI(0); 
 	    _talon2.setD(0);
-	    _talon2.setMotionMagicCruiseVelocity(1000.0);
-	    _talon2.setMotionMagicAcceleration(2000.0);
+	    _talon2.setMotionMagicCruiseVelocity(200.0);
+	    _talon2.setMotionMagicAcceleration(400.0);
 	    
 		_talon3.set(_talon.getDeviceID());
 		_talon4.set(_talon2.getDeviceID());
 
 
 	}
+	
+	public void SetRotationProfile(double targetAngle, double wheelRadiusInches, double turnRadiusInches, double wheelSeparationInches, boolean Clockwise, double rpm)
+	{
+		double inchesPerRotation = wheelRadiusInches * 2 * Math.PI;
+		
+		double arcLengthInner = turnRadiusInches *  (2*Math.PI)/360.0 * targetAngle;
+		
+		double archLengthOuter = (turnRadiusInches + wheelSeparationInches)  *  (2*Math.PI)/360.0 * targetAngle;
+		
+		double innerWheelRotations = arcLengthInner/inchesPerRotation;
+		double outerWheelRotations = -archLengthOuter/inchesPerRotation;
+		
+		double velocityRatio = Math.abs(outerWheelRotations/innerWheelRotations);
+		
+		double innerVelocity = rpm;
+		double outerVelocity = rpm * velocityRatio;
+		
+		double innerAcceleration = 2 * innerVelocity;
+		double outerAcceleration = 2 * outerVelocity;
+		
+		
+		if (!Clockwise)
+		{
+			double tmpRotation = innerWheelRotations;
+			innerWheelRotations = outerWheelRotations;
+			outerWheelRotations = tmpRotation;
+			
+			double tmpAcceleration = innerAcceleration;
+			innerAcceleration = outerAcceleration;
+			outerAcceleration = tmpAcceleration;
+			
+			double tmpVelocity = innerVelocity;
+			innerVelocity = outerVelocity;
+			outerVelocity = tmpVelocity;
+			
+			
+		}
+
+		System.out.println("innerVelocity:" + innerVelocity);
+		System.out.println("outerVelocity:" + outerVelocity);
+		
+		System.out.println("innerAcceleration:" + innerAcceleration);
+		System.out.println("outerAcceleration:" + outerAcceleration);
+		 
+		System.out.println("outerWheelRotations:" + outerWheelRotations);
+		System.out.println("innerWheelRotations:" + innerWheelRotations);
+		
+		_talon.setMotionMagicCruiseVelocity(innerVelocity);
+		_talon2.setMotionMagicCruiseVelocity(outerVelocity);
+		
+		_talon.setMotionMagicAcceleration(innerAcceleration);
+		_talon2.setMotionMagicAcceleration(outerAcceleration);
+		
+		_talon.set(innerWheelRotations);
+		_talon2.set(outerWheelRotations);
+	}
+	
 	/**  function is called periodically during operator control */
     public void teleopPeriodic() {
 		/* get buttons */
@@ -84,6 +141,7 @@ public class Robot extends IterativeRobot {
 
 		/* get the left joystick axis on Logitech Gampead */
 		double leftYjoystick = -1 * _joy.getY(); /* multiple by -1 so joystick forward is positive */
+		double rightYjoystick = -1 * _joy.getRawAxis(5) ; /* multiple by -1 so joystick forward is positive */
 
 		/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
 		_example.control();
@@ -94,8 +152,30 @@ public class Robot extends IterativeRobot {
 //			_talon.set(10);
 //			System.out.println("Hi");
 //		}
+		if (btns[4] == true)
+		{
+			_talon.setPosition(0.0);
+			_talon2.setPosition(0.0);
+
+		}
 		
-		if (btns[5] == false) { /* Check button 5 (top left shoulder on the logitech gamead). */
+		if (btns[1])
+		{
+			_talon.changeControlMode(TalonControlMode.MotionMagic);
+			_talon2.changeControlMode(TalonControlMode.MotionMagic);
+			
+//			_talon.setMotionMagicCruiseVelocity(200.0);
+//			_talon2.setMotionMagicCruiseVelocity(263.3333332);
+//			
+//			_talon.setMotionMagicAcceleration(400.0);
+//			_talon2.setMotionMagicAcceleration(526.6666664);
+			SetRotationProfile(90.0, 1.7,  60.0, 19, true, 200 );
+			
+			//_talon.set(8.267);
+			//_talon2.set(-10.885);
+			
+		}		
+		else if (btns[5] == false) { /* Check button 5 (top left shoulder on the logitech gamead). */
 			/*
 			 * If it's not being pressed, just do a simple drive.  This
 			 * could be a RobotDrive class or custom drivetrain logic.
@@ -107,7 +187,7 @@ public class Robot extends IterativeRobot {
 			
 	
 			_talon.set(12.0 * leftYjoystick);
-			_talon2.set(12.0 * leftYjoystick);
+			_talon2.set(12.0 * rightYjoystick);
 			
 			
 
@@ -144,8 +224,8 @@ public class Robot extends IterativeRobot {
 				//_talon2.setInverted(true);				
 
 				if (useMotionMagic){
-					_talon.set(5.0);
-					_talon2.set(5.0);
+					_talon.set(0.0);
+					_talon2.set(0.0);
 				} else {
 					_example.startMotionProfile();
 					_example2.startMotionProfile();
