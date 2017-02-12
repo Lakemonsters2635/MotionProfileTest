@@ -4,6 +4,9 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Robot extends IterativeRobot {
 
 	/** The Talon we want to motion profile. */
@@ -12,20 +15,20 @@ public class Robot extends IterativeRobot {
 	CANTalon _talon3 = new CANTalon(6);
 	CANTalon _talon4 = new CANTalon(12);
 
-	MotionProfileLibrary profileLibrary = new MotionProfileLibrary();
-	ArrayList<ProfilePoint> pointList = profileLibrary.Drive480(120, 2.5);
+	//MotionProfileLibrary profileLibrary = new MotionProfileLibrary();
+	//ArrayList<ProfilePoint> pointList = profileLibrary.Drive480(120, 2.5);
 	//double[][] profilePoints = profileLibrary.ArrayListToPoints(pointList);
-	double[][] profilePoints = profileLibrary.Profiles.get("Profile").profilePoints;
-	MotionProfile leftProfile = new MotionProfile(profilePoints, true);
-	MotionProfile rightProfile = new MotionProfile(profilePoints, false);
+	//double[][] profilePoints = profileLibrary.Profiles.get("Profile").profilePoints;
+	//MotionProfile leftProfile = new MotionProfile(profilePoints, true);
+	//MotionProfile rightProfile = new MotionProfile(profilePoints, false);
 
-	
+	ArrayList<DriveMotionOperation> driveList = MotionProfileLibrary.SimpleOperationTest();
 	/** some example logic on how one can manage an MP */
 	//MotionProfileLibrary MotionProfiles = new MotionProfileLibrary();
     
     
-	MotionProfileExample _example = new MotionProfileExample(_talon, leftProfile);
-	MotionProfileExample _example2 = new MotionProfileExample(_talon2, rightProfile);
+	//MotionProfileExample _example = new MotionProfileExample(_talon, leftProfile);
+	//MotionProfileExample _example2 = new MotionProfileExample(_talon2, rightProfile);
 	
 	/** joystick for testing */
 	Joystick _joy= new Joystick(0);
@@ -36,15 +39,18 @@ public class Robot extends IterativeRobot {
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
 	boolean [] _btnsLast = {false,false,false,false,false,false,false,false,false,false};
 
+	double errorThreshold = 0.01;
+	public String currentOperationName = "";
+	
 
 	public Robot() { // could also use RobotInit()
 		
 		
-		ArrayList<ProfilePoint> Points = profileLibrary.Drive480(24,  2.5);
-		for (int i=0; i < Points.size(); i++)
-		{
-			System.out.println("{" + Points.get(i).RotationalPosition + "," + Points.get(i).Velocity+ "," + Points.get(i).Duration + "},");
-		}
+//		ArrayList<ProfilePoint> Points = profileLibrary.Drive480(24,  2.5);
+//		for (int i=0; i < Points.size(); i++)
+//		{
+//			System.out.println("{" + Points.get(i).RotationalPosition + "," + Points.get(i).Velocity+ "," + Points.get(i).Duration + "},");
+//		}
 		
 		_talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		_talon.configEncoderCodesPerRev(250);
@@ -57,80 +63,28 @@ public class Robot extends IterativeRobot {
 		
 		
 		_talon.setF(1.5345);
-	    _talon.setP(5);
-	    _talon.setI(0); 
+	    _talon.setP(10);
+	    _talon.setI(.1); 
 	    _talon.setD(0);
 	    _talon.setMotionMagicCruiseVelocity(200.0);
 	    _talon.setMotionMagicAcceleration(400.0);
 	    
 	    _talon2.setF(1.5345);
-	    _talon2.setP(5);
-	    _talon2.setI(0); 
+	    _talon2.setP(10);
+	    _talon2.setI(.1); 
 	    _talon2.setD(0);
 	    _talon2.setMotionMagicCruiseVelocity(200.0);
 	    _talon2.setMotionMagicAcceleration(400.0);
 	    
 		_talon3.set(_talon.getDeviceID());
 		_talon4.set(_talon2.getDeviceID());
+		
+		System.out.println("driveList.size():" + driveList.size());
 
 
 	}
 	
-	public void SetRotationProfile(double targetAngle, double wheelRadiusInches, double turnRadiusInches, double wheelSeparationInches, boolean Clockwise, double rpm)
-	{
-		double inchesPerRotation = wheelRadiusInches * 2 * Math.PI;
-		
-		double arcLengthInner = turnRadiusInches *  (2*Math.PI)/360.0 * targetAngle;
-		
-		double archLengthOuter = (turnRadiusInches + wheelSeparationInches)  *  (2*Math.PI)/360.0 * targetAngle;
-		
-		double innerWheelRotations = arcLengthInner/inchesPerRotation;
-		double outerWheelRotations = -archLengthOuter/inchesPerRotation;
-		
-		double velocityRatio = Math.abs(outerWheelRotations/innerWheelRotations);
-		
-		double innerVelocity = rpm;
-		double outerVelocity = rpm * velocityRatio;
-		
-		double innerAcceleration = 2 * innerVelocity;
-		double outerAcceleration = 2 * outerVelocity;
-		
-		
-		if (!Clockwise)
-		{
-			double tmpRotation = innerWheelRotations;
-			innerWheelRotations = outerWheelRotations;
-			outerWheelRotations = tmpRotation;
-			
-			double tmpAcceleration = innerAcceleration;
-			innerAcceleration = outerAcceleration;
-			outerAcceleration = tmpAcceleration;
-			
-			double tmpVelocity = innerVelocity;
-			innerVelocity = outerVelocity;
-			outerVelocity = tmpVelocity;
-			
-			
-		}
 
-		System.out.println("innerVelocity:" + innerVelocity);
-		System.out.println("outerVelocity:" + outerVelocity);
-		
-		System.out.println("innerAcceleration:" + innerAcceleration);
-		System.out.println("outerAcceleration:" + outerAcceleration);
-		 
-		System.out.println("outerWheelRotations:" + outerWheelRotations);
-		System.out.println("innerWheelRotations:" + innerWheelRotations);
-		
-		_talon.setMotionMagicCruiseVelocity(innerVelocity);
-		_talon2.setMotionMagicCruiseVelocity(outerVelocity);
-		
-		_talon.setMotionMagicAcceleration(innerAcceleration);
-		_talon2.setMotionMagicAcceleration(outerAcceleration);
-		
-		_talon.set(innerWheelRotations);
-		_talon2.set(outerWheelRotations);
-	}
 	
 	/**  function is called periodically during operator control */
     public void teleopPeriodic() {
@@ -144,8 +98,8 @@ public class Robot extends IterativeRobot {
 		double rightYjoystick = -1 * _joy.getRawAxis(5) ; /* multiple by -1 so joystick forward is positive */
 
 		/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
-		_example.control();
-		_example2.control();
+		//_example.control();
+		//_example2.control();
 		
 //		if(_joy.getRawButton(6)) {
 //			_talon.changeControlMode(TalonControlMode.Voltage);
@@ -156,23 +110,133 @@ public class Robot extends IterativeRobot {
 		{
 			_talon.setPosition(0.0);
 			_talon2.setPosition(0.0);
-
+			driveList.clear();
+			driveList = MotionProfileLibrary.SimpleOperationTest();
 		}
 		
 		if (btns[1])
 		{
-			_talon.changeControlMode(TalonControlMode.MotionMagic);
-			_talon2.changeControlMode(TalonControlMode.MotionMagic);
+			if (_talon.getControlMode() !=  TalonControlMode.MotionMagic)
+			{
+				_talon.changeControlMode(TalonControlMode.MotionMagic);
+				_talon2.changeControlMode(TalonControlMode.MotionMagic);
+			}
+
 			
 //			_talon.setMotionMagicCruiseVelocity(200.0);
 //			_talon2.setMotionMagicCruiseVelocity(263.3333332);
 //			
 //			_talon.setMotionMagicAcceleration(400.0);
 //			_talon2.setMotionMagicAcceleration(526.6666664);
-			SetRotationProfile(90.0, 1.7,  60.0, 19, true, 200 );
+			//SetRotationProfile(90.0, 1.7,  60.0, 19, true, 200 );
+			
+			//boolean clockWise = false;
+			//boolean centerRotate = true;
+			// currentOperation = null;
+			DriveMotionOperation currentOperation = null;
+			for (int i=0; i < driveList.size(); i++)
+			{
+				if (driveList.get(i).OperationFinished == false)
+				{
+					if (currentOperationName != driveList.get(i).OperationName)
+					{
+						_talon.setPosition(0.0);
+						_talon2.setPosition(0.0);
+						System.out.println("Operation Has Changed. PreviousOperation:" +  currentOperationName);
+						System.out.println("NewOperation:" +  driveList.get(i));
+						currentOperationName = driveList.get(i).OperationName;
+					}
+					
+					currentOperation = driveList.get(i);
+					break;
+				}
+			}
+			
+
+
+			if (currentOperation != null)
+			{
+				SmartDashboard.putString("CurrentOperationIsNULL", "FALSE");
+				double talon1Error = 0.0;
+				double talon2Error = 0.0;
+				if (currentOperation.driveOperationType == DriveOperationType.Rotation)
+				{
+					RotationParameters rotationParams = MotionProfileLibrary.SetRotationProfile(currentOperation.targetAngle, currentOperation.wheelRadiusInches,  currentOperation.turnRadiusInches, currentOperation.wheelSeparationInches, currentOperation.rpm, currentOperation.Clockwise, currentOperation.rotateCenter );
+					_talon.setMotionMagicCruiseVelocity(rotationParams.innerVelocity);
+					_talon2.setMotionMagicCruiseVelocity(rotationParams.outerVelocity);
+					
+					_talon.setMotionMagicAcceleration(rotationParams.innerAcceleration);
+					_talon2.setMotionMagicAcceleration(rotationParams.outerAcceleration);
+					
+					_talon.set(rotationParams.innerWheelRotations);
+					_talon2.set(rotationParams.outerWheelRotations);
+					talon1Error = Math.abs(rotationParams.innerWheelRotations - _talon.getPosition());
+					talon2Error = Math.abs(rotationParams.outerWheelRotations - _talon2.getPosition());
+				}
+				
+			   
+
+				int talon1CloseLoopError = Math.abs(_talon.getClosedLoopError());
+				int talon2CloseLoopError = Math.abs(_talon2.getClosedLoopError());
+				
+				  SmartDashboard.putNumber("talon:ClosedLoopError:", talon1CloseLoopError);
+				  SmartDashboard.putNumber("talon2:ClosedLoopError:", talon2CloseLoopError);
+				  SmartDashboard.putNumber("talon1Error:", talon1Error);
+				  SmartDashboard.putNumber("talon2Error:", talon2Error);
+
+
+				
+				//TODO: Case where closedLoopError is already zero, even when nothing has been done.
+				if (!currentOperation.OperationStarted && (talon1Error > 0 || talon2Error > 0))
+				{
+					currentOperation.OperationStarted = true;
+					System.out.println("currentOperation.OperationName:" + currentOperation.OperationName);
+				}				
+				
+				//System.out.println("currentOperation.OperationStarted:" + currentOperation.OperationStarted + "    talon1CloseLoopError:" + talon1CloseLoopError + "     talon2CloseLoopError:" + talon2CloseLoopError +   "     errorThreshold:" + errorThreshold);
+				System.out.println("currentOperation.OperationStarted:" + currentOperation.OperationStarted + "    talon1Error:" + talon1Error + "     talon2Error:" + talon2Error +   "     errorThreshold:" + errorThreshold);
+				
+				if (currentOperation.OperationStarted && talon1Error < errorThreshold && talon2Error < errorThreshold)
+				{
+					currentOperation.OperationFinished = true;
+					System.out.println("currentOperation.OperationFinished:" + currentOperation.OperationFinished);
+					//_talon.setPosition(0.0);
+					//_talon2.setPosition(0.0);
+				}
+				
+				SmartDashboard.putBoolean("currentOperation.OperationStarted:", currentOperation.OperationStarted);
+				SmartDashboard.putBoolean("currentOperation.OperationFinished:", currentOperation.OperationFinished);
+				
+			}
+			else if (currentOperation == null)
+			{
+				SmartDashboard.putString("CurrentOperationIsNULL", "TRUE");
+				//_talon.setPosition(0.0);
+				//_talon2.setPosition(0.0);
+			}
+
+			
+
+			
+//			_talon.getClosedLoopError();
+//			_talon.getCloseLoopRampRate();
+//			_talon.getEncVelocity();
+//			_talon.getError();
+//			_talon.getExpiration();
+//			_talon.getMotionProfileStatus(motionProfileStatus);
+//			_talon.getMotionProfileTopLevelBufferCount();
+			
+
+			
 			
 			//_talon.set(8.267);
 			//_talon2.set(-10.885);
+			
+
+			//SmartDashboard.putInt(key, value);
+			
+			
+
 			
 		}		
 		else if (btns[5] == false) { /* Check button 5 (top left shoulder on the logitech gamead). */
@@ -191,45 +255,32 @@ public class Robot extends IterativeRobot {
 			
 			
 
-			_example.reset();
-			_example2.reset();
+			//_example.reset();
+			//_example2.reset();
 		} else {
 			/* Button5 is held down so switch to motion profile control mode => This is done in MotionProfileControl.
 			 * When we transition from no-press to press,
 			 * pass a "true" once to MotionProfileControl.
 			 */
 			
-			if (useMotionMagic){
+			
 				_talon.changeControlMode(TalonControlMode.MotionMagic);
 				_talon2.changeControlMode(TalonControlMode.MotionMagic);
-			} else {
-				_talon.changeControlMode(TalonControlMode.MotionProfile);
-				_talon2.changeControlMode(TalonControlMode.MotionProfile);
-
-				CANTalon.SetValueMotionProfile setOutput = _example.getSetValue();
-				CANTalon.SetValueMotionProfile setOutput2 = _example2.getSetValue();
-				//_talon2.setInverted(true);
-						
 			
-				_talon.set(setOutput.value);
-				_talon2.set(setOutput2.value);
-			}
 			
 
 			/* if btn is pressed and was not pressed last time,
 			 * In other words we just detected the on-press event.
 			 * This will signal the robot to start a MP */
-			if( (btns[6] == true) && (_btnsLast[6] == false) ) {
+			if( (btns[6] == true) && (_btnsLast[6] == false) )
+			{
 				/* user just tapped button 6 */
 				//_talon2.setInverted(true);				
 
-				if (useMotionMagic){
-					_talon.set(0.0);
-					_talon2.set(0.0);
-				} else {
-					_example.startMotionProfile();
-					_example2.startMotionProfile();
-				}
+				
+				_talon.set(0.0);
+				_talon2.set(0.0);
+	
 							
 
 			}
@@ -254,7 +305,7 @@ public class Robot extends IterativeRobot {
 		_talon2.set( 0 );
 
 		/* clear our buffer and put everything into a known state */
-		_example.reset();
-		_example2.reset();
+		//_example.reset();
+		//_example2.reset();
 	}
 }

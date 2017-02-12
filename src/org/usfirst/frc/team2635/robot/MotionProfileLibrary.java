@@ -11,21 +11,162 @@ public class MotionProfileLibrary
 	public MotionProfileLibrary()
 	{
 		Profiles = new HashMap<String, MotionProfile>();
-		LoadProfileLibrary();
 	}
-//	public MotionProfile GenerateProfile(int feet, double wheelRadius)
-//	{
-//		//MotionProfile outProfile = new MotionProfile();
-//	
+
+	public static RotationParameters SetRotationProfile(double targetAngle, double wheelRadiusInches, double turnRadiusInches, double wheelSeparationInches,  double rpm, boolean Clockwise, boolean rotateCenter)
+	{
+		double inchesPerRotation = wheelRadiusInches * 2 * Math.PI;
+		
+		double arcLengthInner;
+		double archLengthOuter;
+		double innerWheelRotations;
+		double outerWheelRotations;
+		
+		if (rotateCenter)
+		{			
+			//To rotate around center.
+			double radius = wheelSeparationInches/2.0;
+			//radius is 1/2 of wheelSeparationInches
+			//ArcLengh = radius * angle in radians
+			
+			arcLengthInner = radius *  (2*Math.PI)/360.0 * targetAngle;
+			archLengthOuter = arcLengthInner;
+			innerWheelRotations = arcLengthInner/inchesPerRotation;
+			outerWheelRotations = archLengthOuter/inchesPerRotation;
+
+		}
+		else
+		{	
+			arcLengthInner = turnRadiusInches *  (2*Math.PI)/360.0 * targetAngle;
+			archLengthOuter = (turnRadiusInches + wheelSeparationInches)  *  (2*Math.PI)/360.0 * targetAngle;
+			innerWheelRotations = arcLengthInner/inchesPerRotation;
+			outerWheelRotations = -archLengthOuter/inchesPerRotation;
+		}
+		
+		
+		double velocityRatio = Math.abs(outerWheelRotations/innerWheelRotations);
+		
+		double innerVelocity = rpm;
+		double outerVelocity = rpm * velocityRatio;
+		
+		double innerAcceleration = 2 * innerVelocity;
+		double outerAcceleration = 2 * outerVelocity;
+		
+		
+		if (!Clockwise && !rotateCenter)
+		{
+			double tmpRotation = innerWheelRotations;
+			innerWheelRotations = outerWheelRotations;
+			outerWheelRotations = tmpRotation;
+			
+			double tmpAcceleration = innerAcceleration;
+			innerAcceleration = outerAcceleration;
+			outerAcceleration = tmpAcceleration;
+			
+			double tmpVelocity = innerVelocity;
+			innerVelocity = outerVelocity;
+			outerVelocity = tmpVelocity;
+		}
+		else if (!Clockwise && rotateCenter)
+		{
+			innerWheelRotations = -innerWheelRotations;
+			outerWheelRotations = -outerWheelRotations;
+		}
+		
+		
+		RotationParameters rotationParams = new RotationParameters();
+		rotationParams.innerAcceleration = innerAcceleration;
+		rotationParams.outerAcceleration = outerAcceleration;
+		rotationParams.innerVelocity     = innerVelocity;
+		rotationParams.outerVelocity     = outerVelocity;
+		rotationParams.innerWheelRotations = innerWheelRotations;
+		rotationParams.outerWheelRotations = outerWheelRotations;
+
+		return rotationParams;
+
+//		System.out.println("innerVelocity:" + innerVelocity);
+//		System.out.println("outerVelocity:" + outerVelocity);
 //		
-//		return outProfile;
-//	}
+//		System.out.println("innerAcceleration:" + innerAcceleration);
+//		System.out.println("outerAcceleration:" + outerAcceleration);
+//		 
+//		System.out.println("outerWheelRotations:" + outerWheelRotations);
+//		System.out.println("innerWheelRotations:" + innerWheelRotations);
+		
+
+	}
+	
+	
+	public static ArrayList<DriveMotionOperation> SimpleOperationTest()
+	{
+		ArrayList<DriveMotionOperation> operationList = new ArrayList<DriveMotionOperation>();
+		DriveMotionOperation rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = 400;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = false;
+		rotateOperation.wheelRadiusInches = 1.45;
+		rotateOperation.wheelSeparationInches = 19.0;
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		rotateOperation.OperationName = "Operation1";
+		
+		operationList.add(rotateOperation);
+		
+		
+		DriveMotionOperation rotateOperation2 = new DriveMotionOperation();
+		
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation2.targetAngle = 90.0;
+		rotateOperation2.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation2.rpm = 400;
+		rotateOperation2.turnRadiusInches = 0;
+		rotateOperation2.rotateCenter = true;
+		rotateOperation2.Clockwise = false;
+		rotateOperation2.wheelRadiusInches = 1.45;
+		rotateOperation2.wheelSeparationInches = 19.0;
+		rotateOperation2.OperationName = "Operation2";
+		rotateOperation2.OperationFinished = false;
+		rotateOperation2.OperationStarted = false;
+		
+		operationList.add(rotateOperation2);
+//		
+//		rotateOperation = new DriveMotionOperation();
+//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+//		rotateOperation.targetAngle = 90.0;
+//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+//		rotateOperation.rpm = 400;
+//		rotateOperation.turnRadiusInches = 0;
+//		rotateOperation.rotateCenter = true;
+//		rotateOperation.Clockwise = false;
+//		rotateOperation.wheelRadiusInches = 1.45;
+//		rotateOperation.wheelSeparationInches = 19.0;
+//		
+//		operationList.add(rotateOperation);
+//		
+//		rotateOperation = new DriveMotionOperation();
+//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+//		rotateOperation.targetAngle = 90.0;
+//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+//		rotateOperation.rpm = 400;
+//		rotateOperation.turnRadiusInches = 0;
+//		rotateOperation.rotateCenter = true;
+//		rotateOperation.Clockwise = false;
+//		rotateOperation.wheelRadiusInches = 1.45;
+//		rotateOperation.wheelSeparationInches = 19.0;
+		
+		//operationList.add(rotateOperation);
+		
+		return operationList;
+	}
+	
+	
 	
 	public 	ArrayList<ProfilePoint> RampUp480()
 	{
-			
-
-		
 		// Position (rotations)	Velocity (RPM)	Duration (ms)
 		double [][]Points = new double[][]{		
 		{0.0167272727272727,	61.09090909	,10},
@@ -97,21 +238,9 @@ public class MotionProfileLibrary
 		ArrayList<ProfilePoint> resultPoints = new ArrayList<ProfilePoint>();
 		for (int i=0; i < Points.length; i++)
 		{
-			double position = 0;
-			double velocity = 0;
-			double duration = 0;
-			if (Points[i].length < 3)
-			{
-				//System.out.println("!!!!!!Points[i].length!!!!!:" + Points[i].length);
-				
-			}
-			else
-			{
-				ProfilePoint point = new ProfilePoint( Points[i][0], Points[i][1], (int)Points[i][2]);
-				resultPoints.add(point);	
-			}
-			
-		
+
+			ProfilePoint point = new ProfilePoint( Points[i][0], Points[i][1], (int)Points[i][2]);
+			resultPoints.add(point);	
 
 		}
 		
@@ -123,27 +252,13 @@ public class MotionProfileLibrary
 		ArrayList<ProfilePoint> TotalPointsList = RampUp480();
 		
 		double RampUpEndPosition = TotalPointsList.get(TotalPointsList.size()-1).RotationalPosition;
+
 		
-		
-		//distance = 120 in
-		//double wheelRadius = 2.5 in
-		
-		double distancePerRotation = wheelRadiusInches * 2 * Math.PI;
-		
+		double distancePerRotation = wheelRadiusInches * 2 * Math.PI;		
 		double requiredRotations = distanceInches/distancePerRotation;
 		
 		double Time = (requiredRotations / 480) * 60;
 		double numberOfIntervals = Time * 100;
-		
-		//System.out.println("distancePerRotation:" + distancePerRotation);
-		//System.out.println("requiredRotations:" + requiredRotations);
-		//System.out.println("Time:" + Time);
-		//System.out.println("numberOfIntervals:" + numberOfIntervals);
-		
-		//double [][]Points = new double[(int)numberOfIntervals][3];
-		
-		
-		
 		double positionDelta = (480 * .01)/60;
 		ProfilePoint point = new ProfilePoint(RampUpEndPosition + positionDelta, 480,10);
 		TotalPointsList.add(point);
@@ -183,227 +298,7 @@ public class MotionProfileLibrary
 
 	
 	
-	public void LoadProfileLibrary()
-	{
-		
-		
-		double[][] Points = new double[][]{		
-			{0.0613333333333333,	112	,20},
-			{0.106666666666667,	160	,20},
-			{0.165333333333333,	192	,20},
-			{0.233333333333333,	216	,20},
-			{0.308,	232	,20},
-			{0.386666666666667,	240	,20},
-			{0.466666666666667,	240	,20},
-			{0.546666666666667,	240	,20},
-			{0.626666666666667,	240	,20},
-			{0.706666666666667,	240	,20},
-			{0.786666666666667,	240	,20},
-			{0.866666666666667,	240	,20},
-			{0.946666666666666,	240	,20},
-			{1.02666666666667,	240	,20},
-			{1.10666666666667,	240	,20},
-			{1.18666666666667,	240	,20},
-			{1.26666666666667,	240	,20},
-			{1.34666666666667,	240	,20},
-			{1.42666666666667,	240	,20},
-			{1.50666666666667,	240	,20},
-			{1.58666666666667,	240	,20},
-			{1.66666666666667,	240	,20},
-			{1.74666666666667,	240	,20},
-			{1.82666666666667,	240	,20},
-			{1.90666666666667,	240	,20},
-			{1.98666666666667,	240	,20},
-			{2.06666666666667,	240	,20},
-			{2.14666666666667,	240	,20},
-			{2.22666666666667,	240	,20},
-			{2.30666666666667,	240	,20},
-			{2.38666666666667,	240	,20},
-			{2.46666666666667,	240	,20},
-			{2.54666666666667,	240	,20},
-			{2.62666666666667,	240	,20},
-			{2.70666666666667,	240	,20},
-			{2.78666666666667,	240	,20},
-			{2.86666666666667,	240	,20},
-			{2.94666666666667,	240	,20},
-			{3.02666666666667,	240	,20},
-			{3.10666666666667,	240	,20},
-			{3.18666666666667,	240	,20},
-			{3.26666666666667,	240	,20},
-			{3.34666666666667,	240	,20},
-			{3.42666666666667,	240	,20},
-			{3.50666666666667,	240	,20},
-			{3.58666666666667,	240	,20},
-			{3.66666666666667,	240	,20},
-			{3.74666666666667,	240	,20},
-			{3.82666666666667,	240	,20},
-			{3.90666666666667,	240	,20},
-			{3.98666666666667,	240	,20},
-			{4.06666666666667,	240	,20},
-			{4.14666666666667,	240	,20},
-			{4.22666666666667,	240	,20},
-			{4.30666666666667,	240	,20},
-			{4.38666666666667,	240	,20},
-			{4.46666666666667,	240	,20},
-			{4.54666666666667,	240	,20},
-			{4.62666666666667,	240	,20},
-			{4.70666666666667,	240	,20},
-			{4.78666666666667,	240	,20},
-			{4.86666666666667,	240	,20},
-			{4.94666666666667,	240	,20},
-			{5.02666666666667,	240	,20},
-			{5.10666666666667,	240	,20},
-			{5.18666666666667,	240	,20},
-			{5.26666666666667,	240	,20},
-			{5.34666666666667,	240	,20},
-			{5.42666666666667,	240	,20},
-			{5.50666666666667,	240	,20},
-			{5.58666666666667,	240	,20},
-			{5.66666666666667,	240	,20},
-			{5.74666666666667,	240	,20},
-			{5.82666666666667,	240	,20},
-			{5.90666666666667,	240	,20},
-			{5.98666666666667,	240	,20},
-			{6.06666666666667,	240	,20},
-			{6.14666666666667,	240	,20},
-			{6.22666666666667,	240	,20},
-			{6.30666666666667,	240	,20},
-			{6.38666666666667,	240	,20},
-			{6.46666666666667,	240	,20},
-			{6.54666666666667,	240	,20},
-			{6.62666666666667,	240	,20},
-			{6.70666666666667,	240	,20},
-			{6.78666666666667,	240	,20},
-			{6.86666666666667,	240	,20},
-			{6.94666666666667,	240	,20},
-			{7.02666666666667,	240	,20},
-			{7.10666666666667,	240	,20},
-			{7.18666666666667,	240	,20},
-			{7.26666666666667,	240	,20},
-			{7.34666666666667,	240	,20},
-			{7.42666666666667,	240	,20},
-			{7.50666666666667,	240	,20},
-			{7.58666666666667,	240	,20},
-			{7.66666666666667,	240	,20},
-			{7.74666666666667,	240	,20},
-			{7.82666666666667,	240	,20},
-			{7.90666666666667,	240	,20},
-			{7.98666666666667,	240	,20},
-			{8.06666666666667,	240	,20},
-			{8.14666666666667,	240	,20},
-			{8.22666666666667,	240	,20},
-			{8.30666666666667,	240	,20},
-			{8.38666666666667,	240	,20},
-			{8.46666666666667,	240	,20},
-			{8.54666666666667,	240	,20},
-			{8.62666666666667,	240	,20},
-			{8.70666666666667,	240	,20},
-			{8.78666666666667,	240	,20},
-			{8.86666666666667,	240	,20},
-			{8.94666666666667,	240	,20},
-			{9.02666666666667,	240	,20},
-			{9.10666666666667,	240	,20},
-			{9.18666666666667,	240	,20},
-			{9.26666666666667,	240	,20},
-			{9.34666666666667,	240	,20},
-			{9.42666666666667,	240	,20},
-			{9.50666666666667,	240	,20},
-			{9.58666666666667,	240	,20},
-			{9.66666666666667,	240	,20},
-			{9.74666666666667,	240	,20},
-			{9.82666666666667,	240	,20},
-			{9.90666666666667,	240	,20},
-			{9.98666666666667,	240	,20},
-			{10.0666666666667,	240	,20},
-			{10.1466666666667,	240	,20},
-			{10.2266666666667,	240	,20},
-			{10.3066666666667,	240	,20},
-			{10.3866666666667,	240	,20},
-			{10.4666666666667,	240	,20},
-			{10.5466666666667,	240	,20},
-			{10.6266666666667,	240	,20},
-			{10.7066666666667,	240	,20},
-			{10.7866666666667,	240	,20},
-			{10.8666666666667,	240	,20},
-			{10.9466666666667,	240	,20},
-			{11.0266666666667,	240	,20},
-			{11.1066666666667,	240	,20},
-			{11.1866666666667,	240	,20},
-			{11.2666666666667,	240	,20},
-			{11.3466666666667,	240	,20},
-			{11.4266666666667,	240	,20},
-			{11.5066666666667,	240	,20},
-			{11.5866666666667,	240	,20},
-			{11.6666666666667,	240	,20},
-			{11.7466666666667,	240	,20},
-			{11.8266666666667,	240	,20},
-			{11.9066666666667,	240	,20},
-			{11.9866666666667,	240	,20},
-			{12.0666666666667,	240	,20},
-			{12.1466666666667,	240	,20},
-			{12.2266666666667,	240	,20},
-			{12.3066666666667,	240	,20},
-			{12.3866666666667,	240	,20},
-			{12.4666666666667,	240	,20},
-			{12.5466666666667,	240	,20},
-			{12.6266666666667,	240	,20},
-			{12.7066666666667,	240	,20},
-			{12.7866666666667,	240	,20},
-			{12.8666666666667,	240	,20},
-			{12.9466666666667,	240	,20},
-			{13.0266666666667,	240	,20},
-			{13.1066666666667,	240	,20},
-			{13.1866666666667,	240	,20},
-			{13.2666666666667,	240	,20},
-			{13.3466666666667,	240	,20},
-			{13.4266666666667,	240	,20},
-			{13.5066666666667,	240	,20},
-			{13.5866666666667,	240	,20},
-			{13.6666666666667,	240	,20},
-			{13.7466666666667,	240	,20},
-			{13.8266666666667,	240	,20},
-			{13.9066666666667,	240	,20},
-			{13.9866666666667,	240	,20},
-			{14.0666666666667,	240	,20},
-			{14.1466666666667,	240	,20},
-			{14.2266666666667,	240	,20},
-			{14.3066666666667,	240	,20},
-			{14.3866666666667,	240	,20},
-			{14.4666666666667,	240	,20},
-			{14.5466666666667,	240	,20},
-			{14.6266666666667,	240	,20},
-			{14.7066666666667,	240	,20},
-			{14.7866666666667,	240	,20},
-			{14.8666666666667,	240	,20},
-			{14.9466666666667,	240	,20},
-			{15.0266666666667,	240	,20},
-			{15.1066666666667,	240	,20},
-			{15.1866666666667,	240	,20},
-			{15.2666666666667,	240	,20},
-			{15.3466666666667,	240	,20},
-			{15.4266666666667,	240	,20},
-			{15.5066666666667,	240	,20},
-			{15.5866666666667,	240	,20},
-			{15.6666666666667,	240	,20},
-			{15.744,	224	,20},
-			{15.8146666666667,	200	,20},
-			{15.876,	168	,20},
-			{15.9253333333333,	128	,20},
-			{15.96,	80	,20},
-			{15.9813333333333,	48	,20},
-			{15.9933333333333,	24	,20},
-			{15.9986666666667,	8	,20},
-			{16.,	0	,20},
-			{16.,	0	,20}};
-			
-			MotionProfile aProfile = new MotionProfile(Points, false );
 
-				
-			//this.Profiles.put("TurnRight45Degrees", turnRight45Degrees);				
-			this.Profiles.put("Profile", aProfile);
-			//this.Profiles.put("turnRight45Degrees", turnRight45Degrees);
-
-		}
 		
 	
 	
