@@ -14,6 +14,11 @@ public class Robot extends IterativeRobot {
 	CANTalon _talon2 = new CANTalon(4);
 	CANTalon _talon3 = new CANTalon(6);
 	CANTalon _talon4 = new CANTalon(12);
+	
+	public double wheelRadiusInches = 1.45;
+	public double wheelSeparationInches = 19.0;
+	
+
 
 	//MotionProfileLibrary profileLibrary = new MotionProfileLibrary();
 	//ArrayList<ProfilePoint> pointList = profileLibrary.Drive480(120, 2.5);
@@ -33,7 +38,7 @@ public class Robot extends IterativeRobot {
 	/** joystick for testing */
 	Joystick _joy= new Joystick(0);
 	
-	boolean useMotionMagic = true;
+
 	
 	/** cache last buttons so we can detect press events.  In a command-based project you can leverage the on-press event
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
@@ -79,7 +84,7 @@ public class Robot extends IterativeRobot {
 		_talon3.set(_talon.getDeviceID());
 		_talon4.set(_talon2.getDeviceID());
 		
-		System.out.println("driveList.size():" + driveList.size());
+		
 
 
 	}
@@ -161,7 +166,13 @@ public class Robot extends IterativeRobot {
 				double talon2Error = 0.0;
 				if (currentOperation.driveOperationType == DriveOperationType.Rotation)
 				{
-					RotationParameters rotationParams = MotionProfileLibrary.SetRotationProfile(currentOperation.targetAngle, currentOperation.wheelRadiusInches,  currentOperation.turnRadiusInches, currentOperation.wheelSeparationInches, currentOperation.rpm, currentOperation.Clockwise, currentOperation.rotateCenter );
+					RotationParameters rotationParams = MotionProfileLibrary.getRotationParameters(currentOperation.targetAngle, 
+																								   wheelRadiusInches,  
+																								   currentOperation.turnRadiusInches,
+																								   wheelSeparationInches, 
+																								   currentOperation.rpm, 
+																								   currentOperation.Clockwise,
+																								   currentOperation.rotateCenter );
 					_talon.setMotionMagicCruiseVelocity(rotationParams.innerVelocity);
 					_talon2.setMotionMagicCruiseVelocity(rotationParams.outerVelocity);
 					
@@ -173,14 +184,32 @@ public class Robot extends IterativeRobot {
 					talon1Error = Math.abs(rotationParams.innerWheelRotations - _talon.getPosition());
 					talon2Error = Math.abs(rotationParams.outerWheelRotations - _talon2.getPosition());
 				}
-				
+				else if (currentOperation.driveOperationType == DriveOperationType.Drive)
+				{
+					DriveParameters driveParams = MotionProfileLibrary.getDriveParameters(wheelRadiusInches, 
+																					      currentOperation.driveDistanceInches, 
+																					      currentOperation.rpm, 
+																					      currentOperation.Reverse);
+					
+					_talon.setMotionMagicCruiseVelocity(driveParams.maxVelocity);
+					_talon2.setMotionMagicCruiseVelocity(driveParams.maxVelocity);
+					
+					_talon.setMotionMagicAcceleration(driveParams.maxAcceleration);
+					_talon2.setMotionMagicAcceleration(driveParams.maxAcceleration);
+					
+					_talon.set(driveParams.leftWheelRotations);
+					_talon2.set(driveParams.rightWheelRotations);
+					
+					talon1Error = Math.abs(driveParams.leftWheelRotations - _talon.getPosition());
+					talon2Error = Math.abs(driveParams.rightWheelRotations - _talon2.getPosition());
+				}
 			   
 
-				int talon1CloseLoopError = Math.abs(_talon.getClosedLoopError());
-				int talon2CloseLoopError = Math.abs(_talon2.getClosedLoopError());
+				//int talon1CloseLoopError = Math.abs(_talon.getClosedLoopError());
+				//int talon2CloseLoopError = Math.abs(_talon2.getClosedLoopError());
 				
-				  SmartDashboard.putNumber("talon:ClosedLoopError:", talon1CloseLoopError);
-				  SmartDashboard.putNumber("talon2:ClosedLoopError:", talon2CloseLoopError);
+				  //SmartDashboard.putNumber("talon:ClosedLoopError:", talon1CloseLoopError);
+				  //SmartDashboard.putNumber("talon2:ClosedLoopError:", talon2CloseLoopError);
 				  SmartDashboard.putNumber("talon1Error:", talon1Error);
 				  SmartDashboard.putNumber("talon2Error:", talon2Error);
 
