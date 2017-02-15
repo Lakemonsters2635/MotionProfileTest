@@ -5,6 +5,7 @@ package org.usfirst.frc.team2635.robot;
 public class DriveMotionOperation 
 {
 	//Common Parameters
+	//OperationName MUST BE UNIQUE within an orchestration.
 	public String OperationName;
 	public double rpm;
 	public DriveOperationType driveOperationType;

@@ -4,11 +4,18 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import com.kauailabs.navx.frc.AHRS;
+
 public class Robot extends IterativeRobot {
 
+	
+	public AHRS navx;
+	
 	/** The Talon we want to motion profile. */
 	CANTalon _talon = new CANTalon(9);
 	CANTalon _talon2 = new CANTalon(4);
@@ -56,6 +63,9 @@ public class Robot extends IterativeRobot {
 //		{
 //			System.out.println("{" + Points.get(i).RotationalPosition + "," + Points.get(i).Velocity+ "," + Points.get(i).Duration + "},");
 //		}
+		
+		//navx = new AHRS(SerialPort.Port.kMXP);
+		navx = new AHRS(SPI.Port.kMXP); 
 		
 		_talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		_talon.configEncoderCodesPerRev(250);
@@ -117,6 +127,7 @@ public class Robot extends IterativeRobot {
 			_talon2.setPosition(0.0);
 			driveList.clear();
 			driveList = MotionProfileLibrary.SimpleOperationTest();
+			//navx.reset();
 		}
 		
 		if (btns[1])
@@ -128,6 +139,9 @@ public class Robot extends IterativeRobot {
 			}
 
 			
+			
+			double navxAngle = navx.getAngle();
+			//
 //			_talon.setMotionMagicCruiseVelocity(200.0);
 //			_talon2.setMotionMagicCruiseVelocity(263.3333332);
 //			
@@ -150,6 +164,9 @@ public class Robot extends IterativeRobot {
 						System.out.println("Operation Has Changed. PreviousOperation:" +  currentOperationName);
 						System.out.println("NewOperation:" +  driveList.get(i));
 						currentOperationName = driveList.get(i).OperationName;
+						System.out.println("Raw Angle:" +  navx.getAngle());
+						System.out.println("-------------------");
+						//SmartDashboard.putNumber("Raw Angle", navx.getAngle());
 					}
 					
 					currentOperation = driveList.get(i);
@@ -223,7 +240,7 @@ public class Robot extends IterativeRobot {
 				}				
 				
 				//System.out.println("currentOperation.OperationStarted:" + currentOperation.OperationStarted + "    talon1CloseLoopError:" + talon1CloseLoopError + "     talon2CloseLoopError:" + talon2CloseLoopError +   "     errorThreshold:" + errorThreshold);
-				System.out.println("currentOperation.OperationStarted:" + currentOperation.OperationStarted + "    talon1Error:" + talon1Error + "     talon2Error:" + talon2Error +   "     errorThreshold:" + errorThreshold);
+				//System.out.println("currentOperation.OperationStarted:" + currentOperation.OperationStarted + "    talon1Error:" + talon1Error + "     talon2Error:" + talon2Error +   "     errorThreshold:" + errorThreshold);
 				
 				if (currentOperation.OperationStarted && talon1Error < errorThreshold && talon2Error < errorThreshold)
 				{

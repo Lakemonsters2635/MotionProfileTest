@@ -132,130 +132,32 @@ public class MotionProfileLibrary
 	
 	public static ArrayList<DriveMotionOperation> SimpleOperationTest()
 	{
+		double rpm = 200;
 		
 //		//go forrward
 		ArrayList<DriveMotionOperation> operationList = new ArrayList<DriveMotionOperation>();
 		DriveMotionOperation rotateOperation;
 		DriveMotionOperation driveOperation;
 		
-		//rotateOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		rotateOperation.targetAngle = 90.0;
-//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
-//		rotateOperation.rpm = 400;
-//		rotateOperation.turnRadiusInches = 0;
-//		rotateOperation.rotateCenter = true;
-//		rotateOperation.Clockwise = false;
-//		rotateOperation.OperationFinished = false;
-//		rotateOperation.OperationStarted = false;
-//		rotateOperation.OperationName = "Rotate1";
-//		operationList.add(rotateOperation);
-//
-//		
-		//driveOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		//driveOperation.targetAngle = 90.0;
-//		driveOperation.driveOperationType = DriveOperationType.Drive;
-//		driveOperation.rpm = 400;
-//		driveOperation.driveDistanceInches = 36;
-//		driveOperation.rotateCenter = false;
-//		driveOperation.Clockwise = false;
-//		driveOperation.OperationFinished = false;
-//		driveOperation.OperationStarted = false;
-//		driveOperation.OperationName = "Drive1";
-//		driveOperation.Reverse = false;
-//		operationList.add(driveOperation);
-//
-//		
-//		
-//		rotateOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		rotateOperation.targetAngle = 90.0;
-//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
-//		rotateOperation.rpm = 400;
-//		rotateOperation.turnRadiusInches = 0;
-//		rotateOperation.rotateCenter = true;
-//		rotateOperation.Clockwise = false;
-//		rotateOperation.OperationName = "Rotate2";
-//		rotateOperation.OperationFinished = false;
-//		rotateOperation.OperationStarted = false;
-//		operationList.add(rotateOperation);
-//		
-//		driveOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		//driveOperation.targetAngle = 90.0;
-//		driveOperation.driveOperationType = DriveOperationType.Drive;
-//		driveOperation.rpm = 400;
-//		driveOperation.driveDistanceInches = 36;
-//		driveOperation.rotateCenter = false;
-//		driveOperation.Clockwise = false;
-//		driveOperation.OperationFinished = false;
-//		driveOperation.OperationStarted = false;
-//		driveOperation.OperationName = "Drive1";
-//		driveOperation.Reverse = false;
-//		operationList.add(driveOperation);
-//
-//		
-//		rotateOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		rotateOperation.targetAngle = 90.0;
-//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
-//		rotateOperation.rpm = 400;
-//		rotateOperation.turnRadiusInches = 0;
-//		rotateOperation.rotateCenter = true;
-//		rotateOperation.Clockwise = false;
-//		rotateOperation.OperationName = "Rotate2";
-//		rotateOperation.OperationFinished = false;
-//		rotateOperation.OperationStarted = false;
-//		operationList.add(rotateOperation);
-//		
-//		
-//		driveOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		//driveOperation.targetAngle = 90.0;
-//		driveOperation.driveOperationType = DriveOperationType.Drive;
-//		driveOperation.rpm = 400;
-//		driveOperation.driveDistanceInches = 36;
-//		driveOperation.rotateCenter = false;
-//		driveOperation.Clockwise = false;
-//		driveOperation.OperationFinished = false;
-//		driveOperation.OperationStarted = false;
-//		driveOperation.OperationName = "Drive1";
-//		driveOperation.Reverse = false;
-//		operationList.add(driveOperation);
-//		
-//		rotateOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		rotateOperation.targetAngle = 90.0;
-//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
-//		rotateOperation.rpm = 400;
-//		rotateOperation.turnRadiusInches = 0;
-//		rotateOperation.rotateCenter = true;
-//		rotateOperation.Clockwise = false;
-//		rotateOperation.OperationName = "Rotate2";
-//		rotateOperation.OperationFinished = false;
-//		rotateOperation.OperationStarted = false;
-//		operationList.add(rotateOperation);
+		rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = rpm;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = false;
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		rotateOperation.OperationName = "Rotate1";
+		operationList.add(rotateOperation);
+
 		
 		driveOperation = new DriveMotionOperation();
 		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
 		//driveOperation.targetAngle = 90.0;
 		driveOperation.driveOperationType = DriveOperationType.Drive;
-		driveOperation.rpm = 400;
-		driveOperation.driveDistanceInches = 36;
-		driveOperation.rotateCenter = false;
-		driveOperation.Clockwise = false;
-		driveOperation.OperationFinished = false;
-		driveOperation.OperationStarted = false;
-		driveOperation.OperationName = "Drive1";
-		driveOperation.Reverse = true;
-		operationList.add(driveOperation);
-		
-		driveOperation = new DriveMotionOperation();
-		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-		//driveOperation.targetAngle = 90.0;
-		driveOperation.driveOperationType = DriveOperationType.Drive;
-		driveOperation.rpm = 400;
+		driveOperation.rpm = rpm;
 		driveOperation.driveDistanceInches = 36;
 		driveOperation.rotateCenter = false;
 		driveOperation.Clockwise = false;
@@ -264,90 +166,190 @@ public class MotionProfileLibrary
 		driveOperation.OperationName = "Drive1";
 		driveOperation.Reverse = false;
 		operationList.add(driveOperation);
+
+		
+		
+		rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = rpm;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = false;
+		rotateOperation.OperationName = "Rotate2";
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		operationList.add(rotateOperation);
+		
+		driveOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		//driveOperation.targetAngle = 90.0;
+		driveOperation.driveOperationType = DriveOperationType.Drive;
+		driveOperation.rpm = rpm;
+		driveOperation.driveDistanceInches = 36;
+		driveOperation.rotateCenter = false;
+		driveOperation.Clockwise = false;
+		driveOperation.OperationFinished = false;
+		driveOperation.OperationStarted = false;
+		driveOperation.OperationName = "Drive2";
+		driveOperation.Reverse = false;
+		operationList.add(driveOperation);
+
+		
+		rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = rpm;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = false;
+		rotateOperation.OperationName = "Rotate3";
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		operationList.add(rotateOperation);
+		
+		
+		driveOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		//driveOperation.targetAngle = 90.0;
+		driveOperation.driveOperationType = DriveOperationType.Drive;
+		driveOperation.rpm = rpm;
+		driveOperation.driveDistanceInches = 36;
+		driveOperation.rotateCenter = false;
+		driveOperation.Clockwise = false;
+		driveOperation.OperationFinished = false;
+		driveOperation.OperationStarted = false;
+		driveOperation.OperationName = "Drive3";
+		driveOperation.Reverse = false;
+		operationList.add(driveOperation);
+		
+		rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = rpm;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = false;
+		rotateOperation.OperationName = "Rotate4";
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		operationList.add(rotateOperation);
+		
+		driveOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		//driveOperation.targetAngle = 90.0;
+		driveOperation.driveOperationType = DriveOperationType.Drive;
+		driveOperation.rpm = rpm;
+		driveOperation.driveDistanceInches = 36;
+		driveOperation.rotateCenter = false;
+		driveOperation.Clockwise = false;
+		driveOperation.OperationFinished = false;
+		driveOperation.OperationStarted = false;
+		driveOperation.OperationName = "Drive4";
+		driveOperation.Reverse = false;
+		operationList.add(driveOperation);
 		
 		//go reverse
+		driveOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		//driveOperation.targetAngle = 90.0;
+		driveOperation.driveOperationType = DriveOperationType.Drive;
+		driveOperation.rpm = rpm;
+		driveOperation.driveDistanceInches = 36;
+		driveOperation.rotateCenter = false;
+		driveOperation.Clockwise = false;
+		driveOperation.OperationFinished = false;
+		driveOperation.OperationStarted = false;
+		driveOperation.OperationName = "Drive5";
+		driveOperation.Reverse = true;
+		operationList.add(driveOperation);
+		
+
 		
 		
-//		rotateOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		rotateOperation.targetAngle = 90.0;
-//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
-//		rotateOperation.rpm = 400;
-//		rotateOperation.turnRadiusInches = 0;
-//		rotateOperation.rotateCenter = true;
-//		rotateOperation.Clockwise = true;
-//		rotateOperation.OperationName = "Rotate2";
-//		rotateOperation.OperationFinished = false;
-//		rotateOperation.OperationStarted = false;
-//		operationList.add(rotateOperation);
-//		
-//		driveOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		//driveOperation.targetAngle = 90.0;
-//		driveOperation.driveOperationType = DriveOperationType.Drive;
-//		driveOperation.rpm = 400;
-//		driveOperation.driveDistanceInches = 36;
-//		driveOperation.rotateCenter = false;
-//		driveOperation.Clockwise = false;
-//		driveOperation.OperationFinished = false;
-//		driveOperation.OperationStarted = false;
-//		driveOperation.OperationName = "Drive1";
-//		driveOperation.Reverse = true;
-//		operationList.add(driveOperation);
-//		
-//		rotateOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		rotateOperation.targetAngle = 90.0;
-//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
-//		rotateOperation.rpm = 400;
-//		rotateOperation.turnRadiusInches = 0;
-//		rotateOperation.rotateCenter = true;
-//		rotateOperation.Clockwise = true;
-//		rotateOperation.OperationName = "Rotate2";
-//		rotateOperation.OperationFinished = false;
-//		rotateOperation.OperationStarted = false;
-//		operationList.add(rotateOperation);
-//		
-//		driveOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		//driveOperation.targetAngle = 90.0;
-//		driveOperation.driveOperationType = DriveOperationType.Drive;
-//		driveOperation.rpm = 400;
-//		driveOperation.driveDistanceInches = 36;
-//		driveOperation.rotateCenter = false;
-//		driveOperation.Clockwise = false;
-//		driveOperation.OperationFinished = false;
-//		driveOperation.OperationStarted = false;
-//		driveOperation.OperationName = "Drive1";
-//		driveOperation.Reverse = true;
-//		operationList.add(driveOperation);
-//		
-//		rotateOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		rotateOperation.targetAngle = 90.0;
-//		rotateOperation.driveOperationType = DriveOperationType.Rotation;
-//		rotateOperation.rpm = 400;
-//		rotateOperation.turnRadiusInches = 0;
-//		rotateOperation.rotateCenter = true;
-//		rotateOperation.Clockwise = true;
-//		rotateOperation.OperationName = "Rotate2";
-//		rotateOperation.OperationFinished = false;
-//		rotateOperation.OperationStarted = false;
-//		operationList.add(rotateOperation);
-//		
-//		driveOperation = new DriveMotionOperation();
-//		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
-//		//driveOperation.targetAngle = 90.0;
-//		driveOperation.driveOperationType = DriveOperationType.Drive;
-//		driveOperation.rpm = 400;
-//		driveOperation.driveDistanceInches = 36;
-//		driveOperation.rotateCenter = false;
-//		driveOperation.Clockwise = false;
-//		driveOperation.OperationFinished = false;
-//		driveOperation.OperationStarted = false;
-//		driveOperation.OperationName = "Drive1";
-//		driveOperation.Reverse = true;
-//		operationList.add(driveOperation);
+		rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = rpm;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = true;
+		rotateOperation.OperationName = "Rotate5";
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		operationList.add(rotateOperation);
+		
+		driveOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		//driveOperation.targetAngle = 90.0;
+		driveOperation.driveOperationType = DriveOperationType.Drive;
+		driveOperation.rpm = rpm;
+		driveOperation.driveDistanceInches = 36;
+		driveOperation.rotateCenter = false;
+		driveOperation.Clockwise = false;
+		driveOperation.OperationFinished = false;
+		driveOperation.OperationStarted = false;
+		driveOperation.OperationName = "Drive6";
+		driveOperation.Reverse = true;
+		operationList.add(driveOperation);
+		
+		rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = rpm;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = true;
+		rotateOperation.OperationName = "Rotate6";
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		operationList.add(rotateOperation);
+		
+		driveOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		//driveOperation.targetAngle = 90.0;
+		driveOperation.driveOperationType = DriveOperationType.Drive;
+		driveOperation.rpm = rpm;
+		driveOperation.driveDistanceInches = 36;
+		driveOperation.rotateCenter = false;
+		driveOperation.Clockwise = false;
+		driveOperation.OperationFinished = false;
+		driveOperation.OperationStarted = false;
+		driveOperation.OperationName = "Drive7";
+		driveOperation.Reverse = true;
+		operationList.add(driveOperation);
+		
+		rotateOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		rotateOperation.targetAngle = 90.0;
+		rotateOperation.driveOperationType = DriveOperationType.Rotation;
+		rotateOperation.rpm = rpm;
+		rotateOperation.turnRadiusInches = 0;
+		rotateOperation.rotateCenter = true;
+		rotateOperation.Clockwise = true;
+		rotateOperation.OperationName = "Rotate7";
+		rotateOperation.OperationFinished = false;
+		rotateOperation.OperationStarted = false;
+		operationList.add(rotateOperation);
+		
+		driveOperation = new DriveMotionOperation();
+		//90.0, 1.45,  0.0, 19, 400,clockWise, centerRotate 
+		//driveOperation.targetAngle = 90.0;
+		driveOperation.driveOperationType = DriveOperationType.Drive;
+		driveOperation.rpm = rpm;
+		driveOperation.driveDistanceInches = 36;
+		driveOperation.rotateCenter = false;
+		driveOperation.Clockwise = false;
+		driveOperation.OperationFinished = false;
+		driveOperation.OperationStarted = false;
+		driveOperation.OperationName = "Drive8";
+		driveOperation.Reverse = true;
+		operationList.add(driveOperation);
 		
 		return operationList;
 	}
